@@ -1,0 +1,10 @@
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+src-tauri/app-icon.png
+.DS_Store
+
+# 환경 변수 (실제 값은 커밋하지 않음 — 템플릿은 .env.example)
+.env
+.env.*
+!.env.example

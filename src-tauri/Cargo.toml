@@ -1,0 +1,23 @@
+[package]
+name = "pomotomo"
+version = "0.1.0"
+description = "Pomotomo — 커플용 픽셀 뽀모도로 타이머"
+authors = ["방성일"]
+edition = "2021"
+
+[lib]
+name = "pomotomo_lib"
+# macOS 데스크톱 전용이라 lib(rlib)만 필요. cdylib/staticlib(모바일용)을 빼
+# 거대한 .a/.dylib 빌드 산출물을 만들지 않는다.
+crate-type = ["lib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "macos-private-api"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.dev]
+incremental = true

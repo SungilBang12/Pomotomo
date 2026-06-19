@@ -1,0 +1,54 @@
+/* Pomotomo — 공유 픽셀 스타일 (디자인 Pomotomo.dc.html 기반) */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "VT323", monospace;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* 픽셀 버튼 누름 효과 (디자인 style-active) */
+.pixbtn {
+  transition: none;
+}
+.pixbtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #0a0810 !important;
+}
+
+/* 토글 스위치 */
+.toggle {
+  width: 46px;
+  height: 24px;
+  border: 2px solid #0a0810;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  cursor: pointer;
+}
+.toggle > div {
+  width: 16px;
+  height: 16px;
+  background: #15111f;
+}
+.toggle.on {
+  background: #6cc257;
+  justify-content: flex-end;
+}
+.toggle.off {
+  background: #2a2440;
+  justify-content: flex-start;
+}
+
+/* mac 트래픽 라이트 */
+.dot {
+  width: 11px;
+  height: 11px;
+  display: inline-block;
+  cursor: pointer;
+}
