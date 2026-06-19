@@ -3,6 +3,33 @@
   var B = window.Bridge,
     E = B.el;
   var appWin = window.__TAURI__.window.getCurrentWindow();
+  var LogicalSize = window.__TAURI__.window.LogicalSize;
+  var MIN_W = 300,
+    MIN_H = 440;
+
+  // borderless+transparent 창에서는 네이티브 startResizeDragging 이 무시되는 경우가 있어,
+  // 마우스 드래그 델타만큼 창 크기를 직접 조절한다.
+  function beginResize(e) {
+    e.preventDefault();
+    var startX = e.screenX,
+      startY = e.screenY;
+    Promise.all([appWin.outerSize(), appWin.scaleFactor()]).then(function (r) {
+      var factor = r[1] || 1;
+      var startW = r[0].width / factor; // logical px
+      var startH = r[0].height / factor;
+      function onMove(ev) {
+        var w = Math.max(MIN_W, startW + (ev.screenX - startX));
+        var h = Math.max(MIN_H, startH + (ev.screenY - startY));
+        appWin.setSize(new LogicalSize(Math.round(w), Math.round(h)));
+      }
+      function onUp() {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    });
+  }
   var app = document.getElementById("app");
   var state = null;
 
@@ -330,18 +357,14 @@
     card.appendChild(body);
 
     // 우하단 크기조절 그립 (borderless 창은 OS 리사이즈 영역이 얇아 직접 제공)
+    // card 의 자식으로 두어 scale 변환을 함께 받아, 보이는 콘텐츠의 우하단 모서리에 위치한다.
     var grip = E(
       "div",
-      "position:absolute;right:3px;bottom:3px;width:20px;height:20px;cursor:nwse-resize;z-index:9;" +
+      "position:absolute;right:3px;bottom:3px;width:20px;height:20px;cursor:nwse-resize;z-index:9999;" +
         "background:repeating-linear-gradient(135deg,transparent,transparent 3px,#6f658a 3px,#6f658a 4px);",
       {
         attr: { title: "크기 조절" },
-        on: {
-          mousedown: function (e) {
-            e.preventDefault();
-            appWin.startResizeDragging("SouthEast");
-          },
-        },
+        on: { mousedown: beginResize },
       }
     );
     card.appendChild(grip);
